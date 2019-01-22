@@ -2,8 +2,8 @@
  Class variable declarations here
  */
 Spaceship player1;
-//Asteroid[] asteroids;
-//Star[] starField;
+Asteroid[] asteroids;
+Star[] starField;
 
 
 /*
@@ -13,19 +13,26 @@ boolean ROTATE_LEFT;  //User is pressing <-
 boolean ROTATE_RIGHT; //User is pressing ->
 boolean MOVE_FORWARD; //User is pressing ^ arrow
 boolean SPACE_BAR;    //User is pressing space bar
+float playerSpeed;
+float playerDirection;
 
   
 /* * * * * * * * * * * * * * * * * * * * * * *
   Initialize all of your variables and game state here
  */
 public void setup() {
-  size(640, 400);
+  size(1280, 800);
   
   //initialize your asteroid array and fill it
   
   //initialize ship
+  player1 = new Spaceship(width/2,height/2,0,0);
   
   //initialize starfield
+  starField = new Star[50];
+  for (int i=0; i<starField.length; i++) {
+    starField[i] = new Star();
+  }
 }
 
 
@@ -35,9 +42,10 @@ public void setup() {
 public void draw() {
   //your code here
   background(0);
-  
-  //Draw Starfield first 
-  //TODO: Part I
+  for (int i=0; i<starField.length; i++) {
+    starField[i].show();
+  }
+  player1.show();
   
   //Check bullet collisions
   //TODO: Part III or IV - for not just leave this comment
@@ -51,7 +59,24 @@ public void draw() {
   //TODO: Part II
 
   //Update spaceship
-  //TODO: Part I
+  playerSpeed = player1.getSpeed();
+  playerDirection = player1.getDirection();
+  if (MOVE_FORWARD) {
+    if (player1.getSpeed() < 5) {
+      player1.setSpeed(playerSpeed += 1);
+    }
+  } else {
+    if (player1.getSpeed() > 0) {
+      player1.setSpeed(playerSpeed -= 1);
+    }
+  }
+  if (ROTATE_LEFT) {
+    player1.setDirection(playerDirection -= 5);
+  }
+  if (ROTATE_RIGHT) {
+    player1.setDirection(playerDirection += 5);
+  }
+  player1.update();
   
   //Check for ship collision agaist asteroids
   //TODO: Part II or III
@@ -104,5 +129,17 @@ void keyReleased() {
   }
   if (keyCode == 32) {
     SPACE_BAR = false;
+  }
+}
+
+void checkOnAsteroids() {
+  for (int i=0; i<asteroids.length; i++) {
+    Asteroid a1 = asteroids[i];
+    for (int j=1; j<asteroids.length; j++) {
+      Asteroid a2 = asteroids[j];
+      if (a1 != a2 && a1.collidingWith(a2)) {
+        
+      }
+    }
   }
 }

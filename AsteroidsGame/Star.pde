@@ -1,4 +1,18 @@
 //note that this class does NOT *NEED* to extend Mover but can if you like
 class Star {
-  //your code here
+  float x_pos;
+  float y_pos;
+  float radius;
+  public Star() {
+    x_pos = (float)(width*Math.random());
+    y_pos = (float)(height*Math.random());
+    this.radius = (float)(3*Math.random())+1;
+  }
+  void show() {
+    pushMatrix();
+    translate(x_pos,y_pos);
+    fill(255);
+    ellipse(0,0,radius,radius);
+    popMatrix();
+  }
 }

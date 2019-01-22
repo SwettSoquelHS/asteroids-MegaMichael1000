@@ -67,7 +67,7 @@ interface Movable {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  Abstract base class Mover 
  */
-abstract class Mover {// implements Movable {
+abstract class Mover implements Movable {
 
   protected float x, y;
   protected float speed;
@@ -103,9 +103,14 @@ abstract class Mover {// implements Movable {
   void update() {
     x = x + speed*(float)Math.cos(radians(direction));
     y = y + speed*(float)Math.sin(radians(direction));
-
-    //todo: You need to decide what to do when X is less than 0 or greater than width
-    //todo: You need to decide what to do when Y is less than 0 or greater than height
+    if (x < 0)
+      x = 0;
+    if (y < 0)
+      y = 0;
+    if (x > width)
+      x = width;
+    if (y > height)
+      y = height;
   }
 
 
@@ -121,9 +126,19 @@ abstract class Mover {// implements Movable {
   /*
     TODO: Part 4: Implement collision detection
    */
-  boolean collidingWith(Movable object){
-     return false; 
+  boolean collidingWith(Movable object) {
+     float distance = dist(x, y, object.getX(), object.getY());
+     boolean touching = distance < (radius + object.getRadius());
+     return touching; 
   }
+  
+  /*
+  boolean collidingWithEdge() {
+     float distance = dist(x, y, object.getX(), object.getY());
+     boolean touching = distance < (radius + object.getRadius());
+     return touching; 
+  }
+  */
   
   //TODO: Part I: implement the methods of Moveable interface - delete this comment
 }
