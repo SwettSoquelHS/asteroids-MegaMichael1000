@@ -15,8 +15,11 @@ boolean MOVE_FORWARD; //User is pressing ^ arrow
 boolean SPACE_BAR;    //User is pressing space bar
 float playerSpeed;
 float playerDirection;
+float asteroidX;
+float asteroidY;
+float asteroidSpeed;
+float asteroidDirection;
 
-  
 /* * * * * * * * * * * * * * * * * * * * * * *
   Initialize all of your variables and game state here
  */
@@ -24,6 +27,14 @@ public void setup() {
   size(1280, 800);
   
   //initialize your asteroid array and fill it
+  asteroids = new Asteroid[10];
+  for (int i=0; i<asteroids.length; i++) {
+    asteroidX = (float)((width-100)*Math.random()+50);
+    asteroidY = (float)((height-100)*Math.random()+50);
+    asteroidSpeed = (float)(3*Math.random()+2);
+    asteroidDirection = (float)(360*Math.random());
+    asteroids[i] = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection);
+  }
   
   //initialize ship
   player1 = new Spaceship(width/2,height/2,0,0);
@@ -51,12 +62,23 @@ public void draw() {
   //TODO: Part III or IV - for not just leave this comment
 
   //TODO: Part II, Update each of the Asteroids internals
-
+  for (int i=0; i<asteroids.length; i++) {
+    asteroids[i].update();
+  }
   //Check for asteroid collisions against other asteroids and alter course
-  //TODO: Part III, for now keep this comment in place
+  for (int i=0; i<asteroids.length; i++) {
+    if (asteroids[i].collidingWithEdgeX()) {
+      asteroids[i].setDirection(180-asteroids[i].getDirection());
+    }
+    if (asteroids[i].collidingWithEdgeY()) {
+      asteroids[i].setDirection(asteroids[i].getDirection()*-1);
+    }
+  }
 
   //Draw asteroids
-  //TODO: Part II
+  for (int i=0; i<asteroids.length; i++) {
+    asteroids[i].show();
+  }
 
   //Update spaceship
   playerSpeed = player1.getSpeed();

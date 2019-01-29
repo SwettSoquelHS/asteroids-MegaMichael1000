@@ -132,13 +132,17 @@ abstract class Mover implements Movable {
      return touching; 
   }
   
-  /*
-  boolean collidingWithEdge() {
-     float distance = dist(x, y, object.getX(), object.getY());
-     boolean touching = distance < (radius + object.getRadius());
-     return touching; 
+  boolean collidingWithEdgeX() {
+     boolean leftedge = (x - radius/2) <= 0;
+     boolean rightedge = (x + radius/2) >= width;
+     return leftedge||rightedge;
   }
-  */
   
-  //TODO: Part I: implement the methods of Moveable interface - delete this comment
+  boolean collidingWithEdgeY() {
+     boolean topedge = (y - radius/2) <= 0;
+     boolean bottomedge = (y + radius/2) >= height;
+     return topedge||bottomedge;
+  }
+  
+  //TODO: Part I: implement the methods of Moveable interface -leftedge||rightedge|| delete this comment
 }
