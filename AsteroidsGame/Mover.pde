@@ -103,14 +103,6 @@ abstract class Mover implements Movable {
   void update() {
     x = x + speed*(float)Math.cos(radians(direction));
     y = y + speed*(float)Math.sin(radians(direction));
-    if (x < 0)
-      x = 0;
-    if (y < 0)
-      y = 0;
-    if (x > width)
-      x = width;
-    if (y > height)
-      y = height;
   }
 
 

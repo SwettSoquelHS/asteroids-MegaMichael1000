@@ -10,7 +10,7 @@ class Asteroid extends Mover implements Movable {
   
   Asteroid(float x, float y, float speed, float direction) {
     super(x,y,speed,direction);
-    radius = (float)(50*Math.random()+50);
+    radius = (float)(25*Math.random()+25);
   }
   float getX() {
     return x;
@@ -31,7 +31,7 @@ class Asteroid extends Mover implements Movable {
     pushMatrix();
     translate(x,y);
     fill(125);
-    ellipse(0,0,radius,radius);
+    ellipse(0,0,radius*2,radius*2);
     popMatrix();
   }
   void setSpeed(float newSpeed) {

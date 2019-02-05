@@ -9,6 +9,7 @@ class Spaceship extends Mover implements Movable {
   
   Spaceship(float x, float y, float speed, float direction) {
     super(x,y,speed,direction);
+    radius = 30;
   }
   float getX() {
     return x;
@@ -44,5 +45,17 @@ class Spaceship extends Mover implements Movable {
   }
   void setDirection(float newDirection) {
     direction = newDirection;
+  }
+  void update() {
+    x = x + speed*(float)Math.cos(radians(direction));
+    y = y + speed*(float)Math.sin(radians(direction));
+    if (x < 0)
+      x = 0;
+    if (y < 0)
+      y = 0;
+    if (x > width)
+      x = width;
+    if (y > height)
+      y = height;
   }
 }

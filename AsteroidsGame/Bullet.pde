@@ -1,7 +1,7 @@
 class Bullet extends Mover implements Movable {
   Bullet(float x, float y, float speed, float direction) {
     super(x,y,speed,direction);
-    radius = 25;
+    radius = 10;
   }
   float getX() {
     return x;
@@ -22,7 +22,7 @@ class Bullet extends Mover implements Movable {
     pushMatrix();
     translate(x,y);
     fill(255);
-    ellipse(0,0,radius,radius);
+    ellipse(0,0,radius*2,radius*2);
     popMatrix();
   }
   void setDirection(float newDirection) {
