@@ -28,7 +28,8 @@ float d1;
 float d2;
 int fireDelay;
 int asteroidsMissing = 0;
-int asteroidCap = 10;
+int asteroidCap = 5;//10;
+int collisionCooldown = 0;
 
 /* * * * * * * * * * * * * * * * * * * * * * *
   Initialize all of your variables and game state here
@@ -87,7 +88,9 @@ public void draw() {
     a.show();
     a.update();
   }
+  
   //Check for asteroid collisions against other asteroids and alter course
+  checkOnAsteroids();
   for (Object o: asteroids) {
     Asteroid a = (Asteroid)o;
     if (a.collidingWithEdgeX()) {
@@ -129,7 +132,7 @@ public void draw() {
   }
   bulletCheck();
   //Check for ship collision agaist asteroids
-  
+
   //Draw spaceship & and its bullets
   //TODO: Part I, for now just render ship
   //TODO: Part IV - we will use a new feature in Java called an ArrayList, 
@@ -186,6 +189,15 @@ void fire() {
   bullets.add(new Bullet(player1.getX(),player1.getY(),10,player1.getDirection()));
 }
 
+void asteroidRespawn() {
+  asteroidX = (float)((width-100)*Math.random()+50);
+  asteroidY = (float)((height-100)*Math.random()+50);
+  asteroidSpeed = (float)(3*Math.random()+2);
+  asteroidDirection = (float)(360*Math.random());
+  Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection);
+  asteroids.add(asteroid);
+}
+
 void bulletCheck() {
   for (int i=0; i<bullets.size(); i++) {
     Bullet b = (Bullet)bullets.get(i);
@@ -211,16 +223,19 @@ void hitCheck() {
     }
   }
 }
-/*
 void checkOnAsteroids() {
-  for (int i=0; i<asteroids.length; i++) {
-    Asteroid a1 = asteroids[i];
-    for (int j=1; j<asteroids.length; j++) {
-      Asteroid a2 = asteroids[j];
-      if (a1 != a2 && a1.collidingWith(a2)) {
-
+  for (Asteroid a1: asteroids) {
+    for (Asteroid a2: asteroids) {
+      if (a1.collidingWith(a2) && a1 != a2) {
+        d1 = a1.getDirection();
+        d2 = a2.getDirection();
+        s1 = a1.getSpeed();
+        s2 = a2.getSpeed();
+        a1.setDirection(d2);
+        a2.setDirection(d1);
+        a1.setSpeed(s2);
+        a2.setSpeed(s1);
       }
     }
   }
 }
-*/
