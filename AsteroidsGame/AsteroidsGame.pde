@@ -27,9 +27,10 @@ float s2;
 float d1;
 float d2;
 int fireDelay;
-int asteroidsMissing = 0;
-int asteroidCap = 5;//10;
+int asteroidCap = 20;
 int collisionCooldown = 0;
+int respawnCooldown = (int)random(5)+5;;
+int spawnZone;
 
 /* * * * * * * * * * * * * * * * * * * * * * *
   Initialize all of your variables and game state here
@@ -42,11 +43,31 @@ public void setup() {
   
   //initialize your asteroid array and fill it
   asteroids = new ArrayList<Asteroid>();
-  for (int i=0; i<asteroidCap; i++) {
-    asteroidX = (float)((width-100)*Math.random()+50);
-    asteroidY = (float)((height-100)*Math.random()+50);
-    asteroidSpeed = (float)(3*Math.random()+2);
-    asteroidDirection = (float)(360*Math.random());
+  for (int i=0; i<1; i++) {
+    spawnZone = (int)random(4);
+    switch (spawnZone) {
+      case 0:
+        asteroidX = (float)(width*Math.random());
+        asteroidY = (float)(-200*Math.random()-100);
+        asteroidDirection = (float)(45*Math.random()+45);
+        break;
+      case 1:
+        asteroidX = (float)(width*Math.random());
+        asteroidY = height+((float)(300*Math.random()+150));
+        asteroidDirection = (float)(255*Math.random()+45);
+        break;
+      case 2:
+        asteroidX = (float)(-200*Math.random()-100);
+        asteroidY = (float)(height*Math.random());
+        asteroidDirection = 180-(float)(135*Math.random()+45);
+        break;
+      case 3:
+        asteroidX = width+((float)(200*Math.random()+150));
+        asteroidY = (float)((height)*Math.random());
+        asteroidDirection = (float)(135*Math.random()+45);
+        break;
+    }
+    asteroidSpeed = (float)(2*Math.random()+3);
     Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection);
     asteroids.add(asteroid);
   }
@@ -83,16 +104,26 @@ public void draw() {
   hitCheck();
 
   //TODO: Part II, Update each of the Asteroids internals
-  for (Object o: asteroids) {
-    Asteroid a = (Asteroid)o;
-    a.show();
-    a.update();
+  for (Asteroid a1: asteroids) {
+    a1.show();
+    a1.update();
+    for (Asteroid a2: asteroids) {
+      if (a1 != a2 && a1.collidingWith(a2)) {
+        s1 = a1.getSpeed();
+        s2 = a2.getSpeed();
+        d1 = a1.getDirection();
+        d2 = a2.getDirection();
+        a1.setSpeed(s2);
+        a1.setDirection(d2);
+        a2.setSpeed(s1);
+        a2.setDirection(d1);
+      }
+    }
   }
   
+  
   //Check for asteroid collisions against other asteroids and alter course
-  checkOnAsteroids();
-  for (Object o: asteroids) {
-    Asteroid a = (Asteroid)o;
+  for (Asteroid a: asteroids) {
     if (a.collidingWithEdgeX()) {
       a.setDirection(180-a.getDirection());
     }
@@ -131,6 +162,12 @@ public void draw() {
     fireDelay--;
   }
   bulletCheck();
+  if (respawnCooldown == 0 && asteroids.size() < asteroidCap) {
+    asteroidRespawn();
+    respawnCooldown = (int)random(5)+5;
+  }
+  if (respawnCooldown > 0)
+    respawnCooldown--;
   //Check for ship collision agaist asteroids
 
   //Draw spaceship & and its bullets
@@ -190,12 +227,32 @@ void fire() {
 }
 
 void asteroidRespawn() {
-  asteroidX = (float)((width-100)*Math.random()+50);
-  asteroidY = (float)((height-100)*Math.random()+50);
-  asteroidSpeed = (float)(3*Math.random()+2);
-  asteroidDirection = (float)(360*Math.random());
-  Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection);
-  asteroids.add(asteroid);
+  spawnZone = (int)random(4);
+    switch (spawnZone) {
+      case 0:
+        asteroidX = (float)(width*Math.random());
+        asteroidY = (float)(-200*Math.random()-100);
+        asteroidDirection = (float)(45*Math.random()+45);
+        break;
+      case 1:
+        asteroidX = (float)(width*Math.random());
+        asteroidY = height+((float)(300*Math.random()+150));
+        asteroidDirection = (float)(225*Math.random()+45);
+        break;
+      case 2:
+        asteroidX = (float)(-200*Math.random()-100);
+        asteroidY = (float)(height*Math.random());
+        asteroidDirection = 180-(float)(135*Math.random()+45);
+        break;
+      case 3:
+        asteroidX = width+((float)(200*Math.random()+150));
+        asteroidY = (float)((height)*Math.random());
+        asteroidDirection = (float)(135*Math.random()+45);
+        break;
+    }
+    asteroidSpeed = (float)(3*Math.random()+2);
+    Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection);
+    asteroids.add(asteroid);
 }
 
 void bulletCheck() {
@@ -218,11 +275,12 @@ void hitCheck() {
       if (b.collidingWith(a)) {
         asteroids.remove(j);
         bullets.remove(i);
-        asteroidsMissing++;
+        //asteroidsMissing++;
       }
     }
   }
 }
+/*
 void checkOnAsteroids() {
   for (Asteroid a1: asteroids) {
     for (Asteroid a2: asteroids) {
@@ -239,3 +297,4 @@ void checkOnAsteroids() {
     }
   }
 }
+*/

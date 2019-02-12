@@ -125,14 +125,14 @@ abstract class Mover implements Movable {
   }
   
   boolean collidingWithEdgeX() {
-     boolean leftedge = (x - radius/2) <= 0;
-     boolean rightedge = (x + radius/2) >= width;
+     boolean leftedge = x + 300 <= 0;
+     boolean rightedge = x - 300 >= width;
      return leftedge||rightedge;
   }
   
   boolean collidingWithEdgeY() {
-     boolean topedge = (y - radius/2) <= 0;
-     boolean bottomedge = (y + radius/2) >= height;
+     boolean topedge = y + 300 <= 0;
+     boolean bottomedge = y - 300 >= height;
      return topedge||bottomedge;
   }
   
