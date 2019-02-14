@@ -12,6 +12,7 @@ class Star {
     pushMatrix();
     translate(x_pos,y_pos);
     fill(255);
+    noStroke();
     ellipse(0,0,radius,radius);
     popMatrix();
   }

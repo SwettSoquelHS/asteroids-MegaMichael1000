@@ -124,6 +124,12 @@ abstract class Mover implements Movable {
      return touching; 
   }
   
+  boolean nearCollidingWith(Movable object) {
+     float distance = dist(x, y, object.getX(), object.getY());
+     boolean touching = distance < (radius + object.getRadius())+1;
+     return touching; 
+  }
+  
   boolean collidingWithEdgeX() {
      boolean leftedge = x + 300 <= 0;
      boolean rightedge = x - 300 >= width;

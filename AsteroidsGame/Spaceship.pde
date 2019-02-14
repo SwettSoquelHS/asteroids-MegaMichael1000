@@ -5,8 +5,6 @@
     might be useful.
 */
 class Spaceship extends Mover implements Movable {
-  protected float radius;
-  
   Spaceship(float x, float y, float speed, float direction) {
     super(x,y,speed,direction);
     radius = 30;
@@ -27,12 +25,13 @@ class Spaceship extends Mover implements Movable {
     return speed;
   }
   void show() {
+    rectMode(CORNER);
     pushMatrix();
     translate(x,y);
     rotate(radians(direction));
     noStroke();
     fill(#8800FF);
-    rect(-30,-20,50,40);
+    rect(-30,-20,55,40);
     fill(100);
     rect(20,-20,10,40,0,10,10,0);
     rect(5,-5,10,10);

@@ -21,7 +21,8 @@ class Bullet extends Mover implements Movable {
   void show() {
     pushMatrix();
     translate(x,y);
-    fill(255);
+    fill(0,255,255);
+    noStroke();
     ellipse(0,0,radius*2,radius*2);
     popMatrix();
   }
