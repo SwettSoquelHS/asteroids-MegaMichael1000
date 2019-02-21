@@ -20,6 +20,7 @@ boolean VALID_SPAWN;
 boolean GAME;
 boolean STARTUP;
 boolean MENU;
+boolean WAITING = false;
 float playerSpeed;
 float playerDirection;
 float asteroidX;
@@ -36,6 +37,7 @@ int asteroidCap = 30;
 int respawnCooldown;
 int spawnZone;
 int score;
+int time;
 
 /* * * * * * * * * * * * * * * * * * * * * * *
   Initialize all of your variables and game state here
@@ -95,7 +97,7 @@ public void setup() {
  */
 public void draw() {
   if (!GAME) {
-    delay(3000);
+    sleep(3000);
     setup();
   }
   background(0);
@@ -360,6 +362,16 @@ void hitCheck() {
         bullets.remove(j);
         score++;
       }
+    }
+  }
+}
+
+void sleep(int wait) {
+  time = millis();
+  WAITING = true;
+  while (WAITING) {
+    if(millis() - time >= wait) {
+      WAITING = false;
     }
   }
 }
