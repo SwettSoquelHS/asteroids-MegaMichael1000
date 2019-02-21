@@ -344,8 +344,7 @@ void bulletCheck() {
     Bullet b = (Bullet)bullets.get(i);
     if (b.getX()<-100 || b.getX()>width+100) {
       bullets.remove(i);
-    }
-    if (b.getY()<-100 || b.getY()>height+100) {
+    } else if (b.getY()<-100 || b.getY()>height+100) {
       bullets.remove(i);
     }
   }
