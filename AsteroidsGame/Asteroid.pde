@@ -8,7 +8,7 @@
 */
 class Asteroid extends Mover implements Movable {
   protected float rot = random(TWO_PI);
-  protected int noCollide = 0;
+  protected boolean noCollide = false;
   protected boolean frag;
   
   Asteroid(float x, float y, float speed, float direction, boolean frag) {
@@ -17,7 +17,7 @@ class Asteroid extends Mover implements Movable {
     this.frag = frag;
     if (frag) {
       radius = radius / 2;
-      noCollide = 1;
+      noCollide = true;
     }
   }
   
@@ -41,7 +41,7 @@ class Asteroid extends Mover implements Movable {
     return speed;
   }
   
-  int noCollide() {
+  boolean isNoCollide() {
     return noCollide;
   }
   
@@ -79,6 +79,6 @@ class Asteroid extends Mover implements Movable {
     direction = newDirection;
   }
   void allowCollisions() {
-    noCollide = 0;
+    noCollide = false;
   }
 }

@@ -161,7 +161,7 @@ public void draw() {
       for (Asteroid a2: asteroids) {
         if (a1 != a2 && a1.collidingWith(a2)) {
           COLLISION = true;
-          if (a1.noCollide() == 0 && a2.noCollide() == 0) {
+          if (!a1.isNoCollide() && !a2.isNoCollide()) {
             s1 = a1.getSpeed();
             s2 = a2.getSpeed();
             d1 = a1.getDirection();
@@ -173,7 +173,7 @@ public void draw() {
           }
         }
       }
-      if (!COLLISION && a1.noCollide() == 1) {
+      if (!COLLISION && a1.isNoCollide()) {
         a1.allowCollisions();
       }
     }
