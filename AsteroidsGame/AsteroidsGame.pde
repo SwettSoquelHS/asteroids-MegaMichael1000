@@ -20,6 +20,7 @@ boolean VALID_SPAWN;
 boolean GAME;
 boolean STARTUP;
 boolean MENU;
+boolean COLLISION;
 boolean WAITING = false;
 float playerSpeed;
 float playerDirection;
@@ -76,8 +77,8 @@ public void setup() {
       asteroidDirection = (float)(135*Math.random()+45);
       break;
   }
-  asteroidSpeed = (float)(3*Math.random()+3);
-  Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection);
+  asteroidSpeed = (float)(2*Math.random()+1);
+  Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection, false);
   asteroids.add(asteroid);
   
   //initialize ship
@@ -156,17 +157,24 @@ public void draw() {
     for (Asteroid a1: asteroids) {
       a1.show();
       a1.update();
+      COLLISION = false;
       for (Asteroid a2: asteroids) {
         if (a1 != a2 && a1.collidingWith(a2)) {
-          s1 = a1.getSpeed();
-          s2 = a2.getSpeed();
-          d1 = a1.getDirection();
-          d2 = a2.getDirection();
-          a1.setSpeed(s2);
-          a1.setDirection(d2);
-          a2.setSpeed(s1);
-          a2.setDirection(d1);
+          COLLISION = true;
+          if (a1.noCollide() == 0 && a2.noCollide() == 0) {
+            s1 = a1.getSpeed();
+            s2 = a2.getSpeed();
+            d1 = a1.getDirection();
+            d2 = a2.getDirection();
+            a1.setSpeed(s2);
+            a1.setDirection(d2);
+            a2.setSpeed(s1);
+            a2.setDirection(d1);
+          }
         }
+      }
+      if (!COLLISION && a1.noCollide() == 1) {
+        a1.allowCollisions();
       }
     }
     
@@ -327,8 +335,8 @@ void asteroidRespawn() {
         asteroidDirection = (float)(135*Math.random()+45);
         break;
     }
-    asteroidSpeed = (float)(3*Math.random()+3);
-    Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection);
+    asteroidSpeed = (float)(2*Math.random()+1);
+    Asteroid asteroid = new Asteroid(asteroidX, asteroidY, asteroidSpeed, asteroidDirection, false);
     VALID_SPAWN = true;
     for (Asteroid a: asteroids) {
       if (a.nearCollidingWith(asteroid)) {
@@ -358,6 +366,12 @@ void hitCheck() {
     for(int j=0; j<bullets.size(); j++) {
       Bullet b = (Bullet)bullets.get(j);
       if (b.collidingWith(a)) {
+        if (!a.isFrag()) {
+          Asteroid frag1 = new Asteroid(a.getX(), a.getY(), a.getSpeed(), a.getDirection()+30, true);
+          Asteroid frag2 = new Asteroid(a.getX(), a.getY(), a.getSpeed(), a.getDirection()-30, true);
+          asteroids.add(frag1);
+          asteroids.add(frag2);
+        }
         asteroids.remove(i);
         bullets.remove(j);
         score++;

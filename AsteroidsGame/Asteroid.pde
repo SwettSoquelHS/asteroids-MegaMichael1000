@@ -8,11 +8,17 @@
 */
 class Asteroid extends Mover implements Movable {
   protected float rot = random(TWO_PI);
+  protected int noCollide = 0;
+  protected boolean frag;
   
-  Asteroid(float x, float y, float speed, float direction) {
+  Asteroid(float x, float y, float speed, float direction, boolean frag) {
     super(x,y,speed,direction);
     radius = (float)(10*Math.random()+30);
-   // radius = radius * 2;
+    this.frag = frag;
+    if (frag) {
+      radius = radius / 2;
+      noCollide = 1;
+    }
   }
   
   float getX() {
@@ -33,6 +39,14 @@ class Asteroid extends Mover implements Movable {
   
   float getSpeed() {
     return speed;
+  }
+  
+  int noCollide() {
+    return noCollide;
+  }
+  
+  boolean isFrag() {
+    return frag;
   }
   
   void show() {
@@ -63,5 +77,8 @@ class Asteroid extends Mover implements Movable {
   }
   void setDirection(float newDirection) {
     direction = newDirection;
+  }
+  void allowCollisions() {
+    noCollide = 0;
   }
 }
