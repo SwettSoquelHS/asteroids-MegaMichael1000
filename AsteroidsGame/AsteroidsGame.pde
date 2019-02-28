@@ -15,7 +15,7 @@ boolean ROTATE_LEFT;  //User is pressing <-
 boolean ROTATE_RIGHT; //User is pressing ->
 boolean MOVE_FORWARD; //User is pressing ^ arrow
 boolean SPACE_BAR;    //User is pressing space bar
-boolean FIRE;
+boolean FIRE_READY;
 boolean VALID_SPAWN;
 boolean GAME;
 boolean STARTUP;
@@ -39,6 +39,8 @@ int respawnCooldown;
 int spawnZone;
 int score;
 int time;
+int energy;
+int power;
 
 /* * * * * * * * * * * * * * * * * * * * * * *
   Initialize all of your variables and game state here
@@ -49,7 +51,8 @@ public void setup() {
   respawnCooldown = (int)random(5)+5;
   startupTime = 180;
   score = 0;
-  size(1280, 800);
+  energy = 0;
+  size(986, 655);
   bullets = new ArrayList<Bullet>();
   asteroids = new ArrayList<Asteroid>();
   //initialize your asteroid array and fill it
@@ -108,19 +111,19 @@ public void draw() {
     textAlign(CENTER);
     textSize(100);
     text("Asteroids",width/2,120);
-    textSize(50);
-    text("AP Computer Science - Michael Vollmer",width/2,250);
+    textSize(40);
+    text("AP Computer Science - Michael Vollmer",width/2,220);
     fill(50);
     noStroke();
-    rect(width/2,450,600,120);
+    rect(width/2,350,600,120);
     fill(0,255,0);
     textSize(100);
-    text("Start Game",width/2,485);
+    text("Start Game",width/2,385);
     fill(255);
-    textSize(64);
-    text("Controls:",width/2,650);
-    textSize(50);
-    text("Up - Move        Left/Right - Steer        Space - Fire",width/2,750);
+    textSize(40);
+    text("Controls:",width/2,515);
+    textSize(30);
+    text("Up - Move        Left/Right - Steer        Space - Fire",width/2,575);
   } else if (STARTUP) {
     for (int i=0; i<starField.length; i++) {
       starField[i].show();
@@ -209,10 +212,10 @@ public void draw() {
       player1.setDirection(playerDirection += 5);
     }
     if (SPACE_BAR) {
-      if (!FIRE && fireDelay == 0) {
+      if (FIRE_READY && fireDelay == 0) {
         fire();
-        FIRE = true;
-        fireDelay = 8;
+        FIRE_READY = false;
+        fireDelay = 15;
       }
     }
     player1.update();
@@ -247,11 +250,18 @@ public void draw() {
     //so for now we'll just leave this comment and come back to it in a bit. 
     
     //Update score
+    noStroke();
     fill(0,255,0);
     rectMode(CENTER);
     textAlign(RIGHT);
     textSize(50);
-    text("Score: "+score,1270,50);
+    text("Score: "+score,977,50);
+    fill(130);
+    rectMode(CORNER);
+    rect(10,10,210,40);
+    fill(0);
+    rect(15,15,200,30);
+    fill(255,255,0);
   }
 }
 
@@ -294,12 +304,12 @@ void keyReleased() {
   }
   if (keyCode == 32) {
     SPACE_BAR = false;
-    FIRE = false;
+    FIRE_READY = true;
   }
 }
 
 void mouseClicked() {
-  if (mouseX>=340 && mouseX<=980 && mouseY>=390 && mouseY<=510 && MENU) {
+  if (mouseX>=193 && mouseX<=793 && mouseY>=290 && mouseY<=410 && MENU) {
     MENU = false;
     STARTUP = true;
   }
