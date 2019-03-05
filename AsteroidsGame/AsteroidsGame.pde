@@ -332,7 +332,7 @@ public void draw() {
     text("Score: "+score,977,50);
     fill(130);
     rectMode(CORNER);
-    rect(10,10,210,40);
+    rect(10,10,210,30);
     switch (charges) {
       case 0:
         fill(0);
@@ -347,7 +347,7 @@ public void draw() {
         fill(255,0,0);
         break;
     }
-    rect(15,15,200,30);
+    rect(15,15,200,20);
     switch (charges) {
       case 0:
         fill(255,255,0);
@@ -359,7 +359,7 @@ public void draw() {
         fill(255,0,0);
         break;
     }
-    rect(15,15,10*energy,30);
+    rect(15,15,10*energy,20);
   }
 }
 
