@@ -6,7 +6,7 @@ class Star {
   public Star() {
     x_pos = (float)(width*Math.random());
     y_pos = (float)(height*Math.random());
-    this.radius = (float)(3*Math.random())+1;
+    radius = (float)(3*Math.random())+1;
   }
   void show() {
     pushMatrix();

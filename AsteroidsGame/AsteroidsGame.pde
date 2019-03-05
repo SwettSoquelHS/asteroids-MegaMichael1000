@@ -5,6 +5,7 @@ import java.util.ArrayList;
  */
 Spaceship player1;
 Star[] starField;
+Cell cell;
 ArrayList<Bullet> bullets;
 ArrayList<Asteroid> asteroids;
 
@@ -15,12 +16,15 @@ boolean ROTATE_LEFT;  //User is pressing <-
 boolean ROTATE_RIGHT; //User is pressing ->
 boolean MOVE_FORWARD; //User is pressing ^ arrow
 boolean SPACE_BAR;    //User is pressing space bar
+boolean FIRED;
 boolean FIRE_READY;
 boolean VALID_SPAWN;
 boolean GAME;
 boolean STARTUP;
 boolean MENU;
 boolean COLLISION;
+boolean OVERDRIVE;
+boolean CELL;
 boolean WAITING = false;
 float playerSpeed;
 float playerDirection;
@@ -33,14 +37,18 @@ float s2;
 float d1;
 float d2;
 float startupTime;
-int fireDelay;
+int fireSpeed;
+int fireTime;
+int overdriveTime;
+int cellTime;
+int cellSpawnTime;
 int asteroidCap = 30;
 int respawnCooldown;
 int spawnZone;
 int score;
 int time;
 int energy;
-int power;
+int charges;
 
 /* * * * * * * * * * * * * * * * * * * * * * *
   Initialize all of your variables and game state here
@@ -48,10 +56,13 @@ int power;
 public void setup() {
   MENU = true;
   GAME = true;
+  FIRE_READY = true;
+  OVERDRIVE = false;
   respawnCooldown = (int)random(5)+5;
   startupTime = 180;
   score = 0;
   energy = 0;
+  charges = 0;
   size(986, 655);
   bullets = new ArrayList<Bullet>();
   asteroids = new ArrayList<Asteroid>();
@@ -92,7 +103,8 @@ public void setup() {
   for (int i=0; i<starField.length; i++) {
     starField[i] = new Star();
   }
-  fireDelay = 0;
+  fireTime = 0;
+  cell = new Cell(-500,-500);
 }
 
 
@@ -152,7 +164,7 @@ public void draw() {
     }
     rectMode(CORNER);
     player1.show();
-    
+    cell.show();
     //Check bullet collisions
     hitCheck();
   
@@ -212,17 +224,30 @@ public void draw() {
       player1.setDirection(playerDirection += 5);
     }
     if (SPACE_BAR) {
-      if (FIRE_READY && fireDelay == 0) {
+      if (FIRE_READY && !FIRED) {
         fire();
+        FIRED = true;
+        if (OVERDRIVE)
+          FIRED = false;
         FIRE_READY = false;
-        fireDelay = 15;
+        fireTime = millis();
       }
     }
     player1.update();
-    if (fireDelay > 0) {
-      fireDelay--;
+    if (OVERDRIVE) {
+      fireSpeed = 220;
+    } else {
+      fireSpeed = 320;
+    }
+    if (millis() - fireTime >= fireSpeed) {
+      FIRE_READY = true;
+    }
+    if (millis() - overdriveTime >= 8000) {
+      OVERDRIVE = false;
+      player1.overdriveOff();
     }
     bulletCheck();
+    checkCell();
     if (respawnCooldown == 0 && asteroids.size() < asteroidCap) {
       asteroidRespawn();
       respawnCooldown = (int)random(5)+5;
@@ -233,7 +258,11 @@ public void draw() {
     for (int i=0; i<asteroids.size(); i++) {
       Asteroid a = asteroids.get(i);
       if (player1.collidingWith(a)) {
-        GAME = false;
+        if (player1.shielded()) {
+          asteroids.remove(i);
+        } else {
+          GAME = false;
+        }
       }
     }
     
@@ -259,9 +288,33 @@ public void draw() {
     fill(130);
     rectMode(CORNER);
     rect(10,10,210,40);
-    fill(0);
+    switch (charges) {
+      case 0:
+        fill(0);
+        break;
+      case 1:
+        fill(255,255,0);
+        break;
+      case 2:
+        fill(255,125,0);
+        break;
+      case 3:
+        fill(255,0,0);
+        break;
+    }
     rect(15,15,200,30);
-    fill(255,255,0);
+    switch (charges) {
+      case 0:
+        fill(255,255,0);
+        break;
+      case 1:
+        fill(255,125,0);
+        break;
+      case 2:
+        fill(255,0,0);
+        break;
+    }
+    rect(15,15,10*energy,30);
   }
 }
 
@@ -278,9 +331,21 @@ void keyPressed() {
       ROTATE_RIGHT = true;
     } else if (keyCode == UP) {
       MOVE_FORWARD = true;
+    } else if (keyCode == SHIFT) {
+      spawnCell();
     }
   }
-
+  if (key == 'q' || key == 'Q') {
+    if (charges >= 1 && !OVERDRIVE) {
+      overdrive();
+      charges--;
+    }
+  } else if (key == 'e' || key == 'E') {
+    if (charges >= 2 && !player1.shielded()) {
+      player1.shield();
+      charges -= 2;
+    }
+  }
   //32 is spacebar
   if (keyCode == 32) {  
     SPACE_BAR = true;
@@ -304,7 +369,7 @@ void keyReleased() {
   }
   if (keyCode == 32) {
     SPACE_BAR = false;
-    FIRE_READY = true;
+    FIRED = false;
   }
 }
 
@@ -316,7 +381,7 @@ void mouseClicked() {
 }
 
 void fire() {
-  bullets.add(new Bullet(player1.getX(),player1.getY(),20,player1.getDirection()));
+  bullets.add(new Bullet(player1.getX(),player1.getY(),15,player1.getDirection()));
 }
 
 void asteroidRespawn() {
@@ -384,10 +449,58 @@ void hitCheck() {
         }
         asteroids.remove(i);
         bullets.remove(j);
+        if (charges < 3) {
+          if (!OVERDRIVE && !player1.shielded()) {
+            energy++;
+            if (energy >= 20) {
+              energy -= 20;
+              charges++;
+            }
+          }
+        }
         score++;
       }
     }
   }
+}
+
+void checkCell() {
+  if (CELL) {
+    if (player1.collidingWith(cell) && charges < 3) {
+      despawnCell();
+      println(cell.getValue());
+      energy += cell.getValue();
+      if (energy >= 20) {
+        if (charges+1 == 3)
+          energy = 0;
+        else
+          energy -= 20;
+        charges++;
+      }
+    }
+  }
+}
+
+void spawnCell() {
+  cell.setX((float)((width-40)*Math.random()+20));
+  cell.setY((float)((height-40)*Math.random()+20));
+  cell.newValue();
+  CELL = true;
+  cellTime = millis();
+}
+
+void despawnCell() {
+  cell.setX(-500);
+  cell.setY(-500);
+  cellTime = millis();
+  CELL = false;
+  cellSpawnTime = (int)random(15000,30000);
+}
+
+void overdrive() {
+  OVERDRIVE = true;
+  overdriveTime = millis();
+  player1.overdriveOn();
 }
 
 void sleep(int wait) {
