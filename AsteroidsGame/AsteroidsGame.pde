@@ -68,7 +68,7 @@ public void setup() {
   startupTime = 180;
   score = 0;
   energy = 0;
-  charges = 3;
+  charges = 0;
   size(986, 655);
   bullets = new ArrayList<Bullet>();
   asteroids = new ArrayList<Asteroid>();
@@ -142,20 +142,25 @@ public void draw() {
     textSize(40);
     textAlign(LEFT);
     text("Controls:",150,440);
-    textSize(30);
-    text("Up - Move",150,500);
-    text("Left/Right - Steer",150,540);
-    text("Space - Fire",150,580);
+    textSize(25);
+    text("Up - Move",150,480);
+    text("Left/Right - Steer",150,510);
+    text("Space - Fire",150,540);
     textSize(40);
     text("Power-ups:",560,440);
-    textSize(30);
+    textSize(25);
     fill(255,255,0);
-    text("Z - Overdrive",560,500);
-    text("X - Shield",560,540);
+    text("Z - Overdrive",560,480);
+    text("X - Shield",560,510);
     fill(255,125,0);
-    text("C - Max Overdrive",560,580);
+    text("C - Max Overdrive",560,540);
     fill(255,0,0);
-    text("V - EMP Blast",560,620);
+    text("V - EMP Blast",560,570);
+    fill(255);
+    textSize(20);
+    textAlign(CENTER);
+    text("You can get energy for power ups by destroying asteroids and collecting cells.",width/2,height-50);
+    text("To use a given power up, the energy bar must be completely filled with the color shown.",width/2,height-25);
   } else if (STARTUP) {
     for (int i=0; i<starField.length; i++) {
       starField[i].show();
