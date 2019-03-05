@@ -7,6 +7,7 @@
 class Spaceship extends Mover implements Movable {
   protected boolean SHIELD;
   protected boolean OVERDRIVE;
+  protected boolean MAX_OVERDRIVE;
   protected int shieldTime;
   
   Spaceship(float x, float y, float speed, float direction) {
@@ -31,6 +32,9 @@ class Spaceship extends Mover implements Movable {
   boolean overdrive() {
     return OVERDRIVE;
   }
+  boolean maxOverdrive() {
+    return MAX_OVERDRIVE;
+  }
   boolean shielded() {
     return SHIELD;
   }
@@ -49,6 +53,8 @@ class Spaceship extends Mover implements Movable {
     fill(#8800FF);
     rect(-30,-20,55,40);
     if (OVERDRIVE)
+      fill(0,0,255);
+    else if (MAX_OVERDRIVE)
       fill(0,255,255);
     else
       fill(100);
@@ -67,7 +73,7 @@ class Spaceship extends Mover implements Movable {
   void update() {
     x = x + speed*(float)Math.cos(radians(direction));
     y = y + speed*(float)Math.sin(radians(direction));
-    if (SHIELD && millis() - shieldTime >= 8000) {
+    if (SHIELD && millis() - shieldTime >= 5000) {
       SHIELD = false;
       radius = 30;
     }
@@ -85,6 +91,10 @@ class Spaceship extends Mover implements Movable {
   }
   void overdriveOff() {
     OVERDRIVE = false;
+    MAX_OVERDRIVE = false;
+  }
+  void maxOverdriveOn() {
+    MAX_OVERDRIVE = true;
   }
   void shield() {
     SHIELD = true;

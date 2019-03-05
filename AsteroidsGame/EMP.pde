@@ -1,9 +1,8 @@
-class Cell extends Mover implements Movable {
-  protected int value;
+class EMP extends Mover implements Movable {
   
-  Cell(float x, float y) {
+  EMP(float x, float y) {
     super(x,y);
-    radius = 20;
+    radius = 0;
   }
   
   float getX() {
@@ -18,10 +17,6 @@ class Cell extends Mover implements Movable {
     return radius;
   }
   
-  int getValue() {
-    return value;
-  }
-  
   float getDirection() {
     return 0;
   }
@@ -30,18 +25,22 @@ class Cell extends Mover implements Movable {
     return 0;
   }
   
-  void newValue() {
-    value = (int)random(5,16);
-  }
-  
   void show() {
     pushMatrix();
     translate(x,y);
-    fill(255,255,0);
-    stroke(80);
-    strokeWeight(4);
+    noFill();
+    stroke(0,255,255);
+    strokeWeight(8);
     ellipse(0,0,radius*2,radius*2);
     popMatrix();
+  }
+  
+  void expand() {
+    radius = radius + 10;
+  }
+  
+  void reset() {
+    radius = 0;
   }
   
   void setX(float newX) {
