@@ -272,16 +272,16 @@ public void draw() {
     }
     player1.update();
     if (OVERDRIVE) {
-      fireSpeed = 220;
+      fireSpeed = 200;
     } else if (MAX_OVERDRIVE) {
-      fireSpeed = 120;
+      fireSpeed = 100;
     } else {
       fireSpeed = 320;
     }
     if (millis() - fireTime >= fireSpeed) {
       FIRE_READY = true;
     }
-    if (millis() - overdriveTime >= 6500) {
+    if (millis() - overdriveTime >= 8000) {
       OVERDRIVE = false;
       MAX_OVERDRIVE = false;
       player1.overdriveOff();
@@ -434,6 +434,7 @@ void mouseClicked() {
     MENU = false;
     STARTUP = true;
     startupTime = millis();
+    despawnCell();
   }
 }
 
@@ -524,6 +525,7 @@ void hitCheck() {
         Asteroid frag2 = new Asteroid(a.getX(), a.getY(), a.getSpeed(), a.getDirection()-30, true);
         asteroids.add(frag1);
         asteroids.add(frag2);
+      } else {
         score++;
       }
       asteroids.remove(i);
