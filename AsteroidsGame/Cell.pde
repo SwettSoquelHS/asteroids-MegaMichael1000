@@ -31,7 +31,7 @@ class Cell extends Mover implements Movable {
   }
   
   void newValue() {
-    value = (int)random(5,16);
+    value = (int)random(10,21);
   }
   
   void show() {
