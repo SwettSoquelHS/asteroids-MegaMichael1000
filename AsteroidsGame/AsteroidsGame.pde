@@ -41,6 +41,7 @@ float s2;
 float d1;
 float d2;
 float startupTime;
+float speedMult;
 int fireSpeed;
 int fireTime;
 int overdriveTime;
@@ -69,6 +70,7 @@ public void setup() {
   score = 0;
   energy = 0;
   charges = 0;
+  speedMult = 1;
   size(986, 655);
   bullets = new ArrayList<Bullet>();
   asteroids = new ArrayList<Asteroid>();
@@ -246,19 +248,22 @@ public void draw() {
     playerSpeed = player1.getSpeed();
     playerDirection = player1.getDirection();
     if (MOVE_FORWARD) {
-      if (player1.getSpeed() < 5) {
-        player1.setSpeed(playerSpeed += 1);
+      if (player1.getSpeed() < 5 * speedMult) {
+        player1.setSpeed(playerSpeed += 1 * speedMult);
       }
     } else {
       if (player1.getSpeed() > 0) {
-        player1.setSpeed(playerSpeed -= 1);
+        player1.setSpeed(playerSpeed -= 1 * speedMult);
+        if (player1.getSpeed() < 0) {
+          player1.setSpeed(0);
+        }
       }
     }
     if (ROTATE_LEFT) {
-      player1.setDirection(playerDirection -= 5);
+      player1.setDirection(playerDirection -= 5 * speedMult);
     }
     if (ROTATE_RIGHT) {
-      player1.setDirection(playerDirection += 5);
+      player1.setDirection(playerDirection += 5 * speedMult);
     }
     if (SPACE_BAR) {
       if (FIRE_READY && !FIRED) {
@@ -285,8 +290,9 @@ public void draw() {
       OVERDRIVE = false;
       MAX_OVERDRIVE = false;
       player1.overdriveOff();
+      speedMult = 1;
     }
-    if (!player1.shielded() && !OVERDRIVE && !MAX_OVERDRIVE) {
+    if (!OVERDRIVE && !MAX_OVERDRIVE) {
       POWERUP = false;
     }
       
@@ -303,8 +309,9 @@ public void draw() {
     for (int i=0; i<asteroids.size(); i++) {
       Asteroid a = asteroids.get(i);
       if (player1.collidingWith(a)) {
-        if (player1.shielded()) {
+        if (player1.shieldLevel() > 0) {
           asteroids.remove(i);
+          player1.shieldDown();
         } else {
           GAME = false;
         }
@@ -346,6 +353,9 @@ public void draw() {
       case 3:
         fill(255,0,0);
         break;
+      case 4:
+        fill(255);
+        break;
     }
     rect(15,15,200,20);
     switch (charges) {
@@ -357,6 +367,9 @@ public void draw() {
         break;
       case 2:
         fill(255,0,0);
+        break;
+      case 3:
+        fill(255);
         break;
     }
     rect(15,15,10*energy,20);
@@ -386,9 +399,8 @@ void keyPressed() {
       charges--;
     }
   } else if (key == 'x' || key == 'X') {
-    if (charges >= 1 && !POWERUP) {
-      player1.shield();
-      POWERUP = true;
+    if (charges >= 1 && player1.shieldLevel() < 3) {
+      player1.shieldUp();
       charges--;
     }
   } else if (key == 'c' || key == 'C') {
@@ -525,9 +537,8 @@ void hitCheck() {
         Asteroid frag2 = new Asteroid(a.getX(), a.getY(), a.getSpeed(), a.getDirection()-30, true);
         asteroids.add(frag1);
         asteroids.add(frag2);
-      } else {
-        score++;
       }
+      score++;
       asteroids.remove(i);
     }
   }
@@ -535,11 +546,11 @@ void hitCheck() {
 
 void checkCell() {
   if (CELL) {
-    if (player1.collidingWith(cell) && charges < 3) {
+    if (player1.collidingWith(cell) && charges < 4) {
       despawnCell();
       energy += cell.getValue();
       if (energy >= 20) {
-        if (charges+1 == 3)
+        if (charges+1 == 4)
           energy = 0;
         else
           energy -= 20;
@@ -570,6 +581,7 @@ void overdrive() {
   OVERDRIVE = true;
   POWERUP = true;
   overdriveTime = millis();
+  speedMult = 1.2;
   player1.overdriveOn();
 }
 
@@ -577,6 +589,7 @@ void maxOverdrive() {
   MAX_OVERDRIVE = true;
   POWERUP = true;
   overdriveTime = millis();
+  speedMult = 1.2;
   player1.maxOverdriveOn();
 }
 

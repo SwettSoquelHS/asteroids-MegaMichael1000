@@ -5,7 +5,7 @@
     might be useful.
 */
 class Spaceship extends Mover implements Movable {
-  protected boolean SHIELD;
+  protected int shield;
   protected boolean OVERDRIVE;
   protected boolean MAX_OVERDRIVE;
   protected int shieldTime;
@@ -35,17 +35,27 @@ class Spaceship extends Mover implements Movable {
   boolean maxOverdrive() {
     return MAX_OVERDRIVE;
   }
-  boolean shielded() {
-    return SHIELD;
+  int shieldLevel() {
+    return shield;
   }
   void show() {
     rectMode(CORNER);
     pushMatrix();
     translate(x,y);
     rotate(radians(direction));
-    if (SHIELD) {
+    if (shield > 0) {
       noFill();
-      stroke(0,125,255);
+      switch (shield) {
+        case 1:
+          stroke(0,125,255,85);
+          break;
+        case 2:
+          stroke(0,125,255,170);
+          break;
+        case 3:
+          stroke(0,125,255);
+          break;
+      }
       strokeWeight(5);
       ellipse(0,0,radius*2,radius*2);
     }
@@ -73,9 +83,11 @@ class Spaceship extends Mover implements Movable {
   void update() {
     x = x + speed*(float)Math.cos(radians(direction));
     y = y + speed*(float)Math.sin(radians(direction));
-    if (SHIELD && millis() - shieldTime >= 4000) {
-      SHIELD = false;
-      radius = 30;
+    if (shield > 0 && millis() - shieldTime >= 60000) {
+      shield--;
+      shieldTime = millis();
+      if (shield == 0)
+        radius = 30;
     }
     if (x < 0)
       x = 0;
@@ -96,9 +108,19 @@ class Spaceship extends Mover implements Movable {
   void maxOverdriveOn() {
     MAX_OVERDRIVE = true;
   }
-  void shield() {
-    SHIELD = true;
-    shieldTime = millis();
-    radius = 40;
+  void shieldUp() {
+    if (shield < 3) {
+      shield++;
+      shieldTime = millis();
+      radius = 40;
+    }
+  }
+  void shieldDown() {
+    if (shield > 0) {
+      shield--;
+      if (shield == 0) {
+        radius = 30;
+      }
+    }
   }
 }
